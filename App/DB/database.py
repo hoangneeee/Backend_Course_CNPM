@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-class Database():
+class database():
 
     DATABASE = os.getenv('DATABASE')
     USER = os.getenv('USER')
@@ -19,6 +19,10 @@ class Database():
 
     # databases
     database = databases.Database(DATABASE_URL, min_size=5, max_size=20)
+
+    ECHO_LOG = False
+
+    engine = sqlalchemy.create_engine(DATABASE_URL, echo=ECHO_LOG)
 
     metadata = sqlalchemy.MetaData()
 
