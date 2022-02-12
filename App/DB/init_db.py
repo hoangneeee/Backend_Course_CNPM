@@ -4,8 +4,8 @@ import asyncio
 import os
 
 from dotenv import load_dotenv
-from App.Common import common
-from App.DB.database import database as db
+# from App.Common import common
+# from App.DB.database import database as db
 
 
 load_dotenv()
@@ -107,7 +107,7 @@ async def create_cart():
                 id                      serial primary key,
                 create_time             char(14),
                 update_time             char(14),
-                user_id                 integer,
+                member_id               integer,
                 course_id               integer[],
                 total_price             float
                 )
@@ -125,8 +125,8 @@ async def create_access_token():
     query = 'drop table if exists %s' % (tableName)
     await database.fetch_all(query)
     query = ''' create table %s(
-                access_id               text,
-                user_id                 integer,
+                access_token            text,
+                member_id               integer,
                 member_group            integer 
                 )
             ''' % (tableName)
@@ -136,24 +136,24 @@ async def create_access_token():
     print(tableName + ' create complete')
 
 
-async def create_user_admin(password, username):
-    cur_time = common.get_now_time()
-    passwd_hash = common.Hash.hashing(password, username)
-    rows = "create_time, update_time, username, password, age, gender, coin, gmail, phone, member_group"
-    values = "'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'," % (
-        cur_time,
-        cur_time,
-        username,
-        passwd_hash,
-        0,
-        0,
-        0,
-        os.getenv('GMAIL'),
-        os.getenv('PHONE'),
-        0
-    )
-    query = db.database.get_insert_query("member", rows, values)
-    await db.database.database.execute(query=query)
+# async def create_user_admin(password, username):
+#     cur_time = common.get_now_time()
+#     passwd_hash = common.Hash.hashing(password, username)
+#     rows = "create_time, update_time, username, password, age, gender, coin, gmail, phone, member_group"
+#     values = "'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s'," % (
+#         cur_time,
+#         cur_time,
+#         username,
+#         passwd_hash,
+#         0,
+#         0,
+#         0,
+#         os.getenv('GMAIL'),
+#         os.getenv('PHONE'),
+#         0
+#     )
+#     query = db.database.get_insert_query("member", rows, values)
+#     await db.database.database.execute(query=query)
 
 
 # *******************************************************************
@@ -183,5 +183,5 @@ if __name__ == '__main__':
             loop.run_until_complete(create_lesson())
             loop.run_until_complete(create_cart())
             loop.run_until_complete(create_access_token())
-            loop.run_until_complete(create_user_admin(os.getenv('PASSWORD'), os.getenv('USERNAME')))
+            # loop.run_until_complete(create_user_admin(os.getenv('PASSWORD'), os.getenv('USER_PASSWORD')))
 

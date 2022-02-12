@@ -52,28 +52,21 @@ async def verify_token(token:str):
         return -1
 
 
-async def add_access_token(access_token, user_id, user_kind):
-    row = "access_key, user_kind, user_id"
-    values = "'%s', '%s', '%s' " % (
+async def add_access_token(access_token, member_id, member_group):
+    row = "access_token, member_id, member_group"
+    values = "'%s', %s, '%s' " % (
         access_token,
-        user_kind,
-        user_id,
+        member_id,
+        member_group
     )
-    query = db.get_insert_query('access_keys', row, values)
+    query = db.get_insert_query('access_token', row, values)
     await db.database.database.execute(query=query)
 
 
-async def update_access_token_cus(access_token, user_id):
-    row = "access_key='%s'" % access_token
-    where = "user_id='%s' and user_kind=10" % user_id
-    query = "update access_keys set %s where %s" % (row, where)
-    await db.database.database.execute(query=query)
-
-
-async def update_access_token_ope(access_token, user_id, user_kind):
-    row = "access_key='%s'" % access_token
-    where = "user_id='%s' and user_kind='%s'" % (user_id, user_kind)
-    query = "update access_keys set %s where %s" % (row, where)
+async def update_access_token(access_token, member_id):
+    row = "access_token='%s'" % access_token
+    where = "member_id=%s" % member_id
+    query = "update access_token set %s where %s" % (row, where)
     await db.database.database.execute(query=query)
 
 
