@@ -14,7 +14,7 @@ APIVER = '1.0.0'
 
 @router.post('/register', summary='Handle Register')
 async def handle_register(user: schemas_user.UserRegister):
-    print("/user/register param=%s" % user)
+    print("/user/register param=%s" % user.__dict__)
     cur_time = common.get_now_time()
     hash_password = common.Hash.hashing(user.password, user.username)
 

@@ -39,15 +39,15 @@ def create_access_token():
 
 
 async def verify_token(token:str):
-    query = "select * from access_keys where access_key='%s'" %token
+    query = "select * from access_token where access_token='%s'" %token
     select_row = await db.database.database.fetch_one(query=query)
     if select_row is None:
         return -1
 
-    access_token = select_row.get('access_key')
+    access_token = select_row.get('access_token')
 
     if token == access_token:
-        return select_row.get('user_kind')
+        return select_row.get('member_group')
     else:
         return -1
 

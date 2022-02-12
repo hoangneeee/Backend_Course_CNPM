@@ -13,7 +13,7 @@ APIVER = '1.0.0'
 
 @router.post('/login', summary='Handle Login')
 async def handle_login(user: schemas_admin.Login):
-    print("/auth/login param=%s" % user)
+    print("/auth/login param=%s" % user.__dict__)
     query = "select * from member where username='%s'" % user.username
     member_row = await db.database.database.fetch_one(query=query)
 
