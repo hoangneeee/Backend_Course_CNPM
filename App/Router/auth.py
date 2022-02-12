@@ -34,7 +34,7 @@ async def handle_login(user: schemas_admin.Login):
             select_row = await db.database.database.fetch_one(query=query)
             access_token = objects_user.AccessToken()
 
-            if select_row.get('member_id') is None:
+            if select_row is None:
                 # Create Access token
                 access_token.access_token = common.create_access_token()
                 await common.add_access_token(access_token.access_token, member_id, member_group)
