@@ -21,7 +21,7 @@ def setup_fastapi():
     )
 
     app.include_router(
-        router_admin.router,
+        router_user.router,
         tags=["user"],
         prefix="/user"
     )
