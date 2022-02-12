@@ -22,3 +22,7 @@ class CreateCourse(BaseModel):
     price: float
     status: int = 1
     lessons: List[LessonInfo]
+
+
+class GetCourse(BaseModel):
+    id: int
