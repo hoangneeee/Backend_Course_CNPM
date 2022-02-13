@@ -86,6 +86,18 @@ async def get_all_course(course: schemas_admin.GetCourse, access_token: Optional
                         course_info.__dict__[key] = course_row.get(item)
                         break
 
+            # Response Member
+            query = "select * from member where id=%s" % course_row.get('author_id')
+            member_row = await db.database.database.fetch_one(query=query)
+            member_info = objects_user.MemberInfo()
+            for item in member_row:
+                for key in vars(member_info).keys():
+                    if key == item:
+                        member_info.__dict__[key] = member_row.get(item)
+                        break
+            course_info.author_id = member_info.__dict__
+
+            # Response Lesson
             lesson_ids = course_row.get('lesson')
             lesson = []
             for lesson_id in lesson_ids:
@@ -109,7 +121,7 @@ async def get_all_course(course: schemas_admin.GetCourse, access_token: Optional
         course_row = await db.database.database.fetch_one(query=query)
 
         if course_row is None:
-            return ResponseData(status_code=status.HTTP_200_OK, data={'courses': response_info})
+            return ResponseData(status_code=status.HTTP_200_OK, data={'courses': {}})
 
         # Response Course
         course_info = objects_admin.CourseInfo()
@@ -119,6 +131,18 @@ async def get_all_course(course: schemas_admin.GetCourse, access_token: Optional
                     course_info.__dict__[key] = course_row.get(item)
                     break
 
+        # Response Member
+        query = "select * from member where id=%s" % course_row.get('author_id')
+        member_row = await db.database.database.fetch_one(query=query)
+        member_info = objects_user.MemberInfo()
+        for item in member_row:
+            for key in vars(member_info).keys():
+                if key == item:
+                    member_info.__dict__[key] = member_row.get(item)
+                    break
+        course_info.author_id = member_info.__dict__
+
+        # Response Lesson
         lesson_ids = course_row.get('lesson')
         lesson = []
         for lesson_id in lesson_ids:
@@ -133,7 +157,6 @@ async def get_all_course(course: schemas_admin.GetCourse, access_token: Optional
             lesson.append(lesson_info.__dict__)
             course_info.lesson = lesson
 
-        response_info.append(course_info)
 
-        return ResponseData(status_code=status.HTTP_200_OK, data={'courses': response_info})
+        return ResponseData(status_code=status.HTTP_200_OK, data={'courses': course_info})
 

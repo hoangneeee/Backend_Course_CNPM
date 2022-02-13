@@ -27,7 +27,7 @@ class CourseInfo(object):
         self.video = ""
         self.image = ""
         self.description = ""
-        self.author_id = ""
+        self.author_id = object_user.MemberInfo.__dict__
         self.price = ""
         self.status = ""
         self.lesson = LessonInfo.__dict__
