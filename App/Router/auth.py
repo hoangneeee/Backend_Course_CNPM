@@ -1,7 +1,8 @@
 from fastapi import APIRouter, status
 
 from App.Schemas import admin as schemas_admin
-from App.Objects import admin as objects_user
+from App.Objects import admin as objects_admin
+from App.Objects import user as objects_user
 from App.DB import database as db
 from App.Common import common
 from App.Common.response import ResponseData
@@ -32,16 +33,26 @@ async def handle_login(user: schemas_admin.Login):
         if common.Hash.verify(hashed_password, plain_password, username):
             query = "select * from access_token where member_id=%s" % member_id
             select_row = await db.database.database.fetch_one(query=query)
-            access_token = objects_user.AccessToken()
+            access_token = objects_admin.AccessToken()
+            member_info = objects_user.MemberInfo()
+
+            # Response member info
+            for item in member_row:
+                for key in vars(member_info).keys():
+                    if key == item:
+                        member_info.__dict__[key] = member_row.get(item)
+                        break
 
             if select_row is None:
                 # Create Access token
                 access_token.access_token = common.create_access_token()
+                access_token.member_info = member_info.__dict__
                 await common.add_access_token(access_token.access_token, member_id, member_group)
                 return ResponseData(status_code=status.HTTP_200_OK, data=access_token)
             else:
                 # Update Access token
                 access_token.access_token = common.create_access_token()
+                access_token.member_info = member_info.__dict__
                 await common.update_access_token(access_token.access_token, member_id)
                 return ResponseData(status_code=status.HTTP_200_OK, data=access_token)
         else:
