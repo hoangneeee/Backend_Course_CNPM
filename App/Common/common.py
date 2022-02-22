@@ -11,8 +11,10 @@ def insert_string(string, index, plus_string):
     return string[:index] + plus_string + string[index:]
 
 
-'''Time VN'''
+
 def get_now_time():
+    ''' Get Time VN Now'''
+
     VN = timezone(timedelta(hours=+7), 'VN')
     now = datetime.now(VN)
     nowStr = now.strftime('%Y%m%d%H%M%S')

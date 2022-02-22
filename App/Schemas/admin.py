@@ -26,3 +26,7 @@ class CreateCourse(BaseModel):
 
 class GetCourse(BaseModel):
     id: int
+
+
+class RemoveCourse(BaseModel):
+    course_id: int

@@ -13,8 +13,8 @@ router = APIRouter()
 APIVER = '1.0.0'
 
 
-@router.post('/course', summary='Create Course')
-async def handle_register(course: schemas_admin.CreateCourse, access_token: Optional[str] = Header(None, convert_underscores=True)):
+@router.post('/create_course', summary='Create Course')
+async def create_course(course: schemas_admin.CreateCourse, access_token: Optional[str] = Header(None, convert_underscores=True)):
     print("/admin/course param=%s" % course.__dict__)
     cur_time = common.get_now_time()
     member_group = await common.verify_token(access_token)
@@ -66,3 +66,27 @@ async def handle_register(course: schemas_admin.CreateCourse, access_token: Opti
         await db.database.database.execute(query=query)
 
     return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.CREATE_COURSE_SUCCESS)
+
+
+@router.post('/remove_course', summary='Remove Course')
+async def handle_register(course: schemas_admin.RemoveCourse, access_token: Optional[str] = Header(None, convert_underscores=True)):
+    print("/admin/remove_course param=%s" % course.__dict__)
+
+    member_group = await common.verify_token(access_token)
+    if member_group != 0:
+        return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.NOT_ALLOWED)
+
+    query = "select * from course where id=%s" % course.course_id
+    course_row = await db.database.database.fetch_one(query=query)
+
+    # Remove Lesson
+    lesson_ids = course_row.get('lesson')
+    for lesson_id in lesson_ids:
+        query = await db.get_delete_query('lesson', 'id', lesson_id)
+        await db.database.database.execute(query=query)
+
+    # Remove Course
+    query = await db.get_delete_query('course', 'id', course.course_id)
+    await db.database.database.execute(query=query)
+
+

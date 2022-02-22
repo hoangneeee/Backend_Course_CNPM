@@ -30,10 +30,10 @@ class database():
     metadata = sqlalchemy.MetaData()
 
 
-def get_insert_query(tableName, rows, value):
+async def get_insert_query(tableName, rows, value):
     return 'insert into %s(%s) values(%s)' % (tableName, rows, value)
 
 
-def get_delete_query(tableName, where, value):
+async def get_delete_query(tableName, where, value):
     return "delete from %s where %s=%s" % (tableName, where, value)
 
