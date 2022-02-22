@@ -23,6 +23,8 @@ def get_now_time():
 
 
 def get_date(month_flg: bool = False):
+    ''' Get Date VN Now '''
+
     VN = timezone(timedelta(hours=+7), 'VN')
     now = datetime.now(VN)
     date = now.strftime('%Y%m%d')
@@ -32,8 +34,9 @@ def get_date(month_flg: bool = False):
     return date
 
 
-''' Token Section'''
 def create_access_token():
+    ''' Create Access Token '''
+
     access_token = ''.join(
         [secrets.choice(string.ascii_letters + string.digits) for i in range(130)])
 
@@ -41,6 +44,8 @@ def create_access_token():
 
 
 async def verify_token(token:str):
+    ''' Verify Access Token '''
+
     query = "select * from access_token where access_token='%s'" %token
     select_row = await db.database.database.fetch_one(query=query)
     if select_row is None:
@@ -55,6 +60,8 @@ async def verify_token(token:str):
 
 
 async def add_access_token(access_token, member_id, member_group):
+    ''' Add Access Token '''
+
     row = "access_token, member_id, member_group"
     values = "'%s', %s, '%s' " % (
         access_token,
@@ -66,14 +73,16 @@ async def add_access_token(access_token, member_id, member_group):
 
 
 async def update_access_token(access_token, member_id):
+    ''' Update Access Token '''
+
     row = "access_token='%s'" % access_token
     where = "member_id=%s" % member_id
     query = "update access_token set %s where %s" % (row, where)
     await db.database.database.execute(query=query)
 
 
-'''Hash Password Section'''
 class Hash():
+    '''Hash Password Section'''
 
     def hashing(password: str, username: str):
         password_encrypt = password + ' ' + username
