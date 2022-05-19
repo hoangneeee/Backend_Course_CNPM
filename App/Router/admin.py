@@ -90,3 +90,11 @@ async def handle_register(course: schemas_admin.RemoveCourse, access_token: Opti
     await db.database.database.execute(query=query)
 
 
+@router.post('/remove_user', summary='Remove User')
+async def remove_user(course: schemas_admin.RemoveUser, access_token: Optional[str] = Header(None, convert_underscores=True)):
+    print("/admin/remove_user param=%s" % course.__dict__)
+
+    member_group = await common.verify_token(access_token)
+    if member_group != 0:
+        return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.NOT_ALLOWED)
+

@@ -11,3 +11,9 @@ class UserRegister(BaseModel):
     phone: str
     member_group: int
 
+
+class AddCart(BaseModel):
+    member_id: int
+    course_id: int
+    total_price: float
+

@@ -11,8 +11,8 @@ info = {
     'author': os.getenv('AUTHOR')
 }
 
-'''Response Section'''
 class HTTPException(Exception):
+    '''Response Section'''
     def __init__(self, status_code: int, status_message: str = None, data: str = None) -> None:
         if data is None:
             data = http.HTTPStatus(status_code).phrase

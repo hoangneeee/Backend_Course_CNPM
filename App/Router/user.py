@@ -62,11 +62,11 @@ async def handle_register(user: schemas_user.UserRegister):
 
 
 @router.post('/course_get', summary='Get Course Information')
-async def get_all_course(course: schemas_admin.GetCourse, access_token: Optional[str] = Header(None, convert_underscores=True)):
+async def get_all_course(course: schemas_admin.GetCourse):
     print("/user/course param=%s" % course.__dict__)
-    member_group = await common.verify_token(access_token)
-    if member_group != 0 and member_group != 1 and member_group != 2:
-        return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.NOT_ALLOWED)
+    # member_group = await common.verify_token(access_token)
+    # if member_group != 0 and member_group != 1 and member_group != 2:
+    #     return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.NOT_ALLOWED)
 
     response_info: List[objects_admin.CourseInfo] = []
     # Get All Course
@@ -159,4 +159,24 @@ async def get_all_course(course: schemas_admin.GetCourse, access_token: Optional
 
 
         return ResponseData(status_code=status.HTTP_200_OK, data={'courses': course_info})
+
+
+@router.post('/add_cart', summary='Handle Add Cart')
+async def add_cart(user: schemas_user.AddCart):
+    print("/user/add_cart param=%s" % user.__dict__)
+
+    cur_time = common.get_now_time()
+
+
+    row = "create_time, update_time, member_id, course_id, total_price"
+    value = "'%s', '%s', '%s', '%s', '%s'" % (
+        cur_time,
+        cur_time,
+        user.member_id,
+        user.course_id,
+        user.total_price,
+    )
+    query = db.get_insert_query('cart', row, value)
+    await db.database.database.execute(query=query)
+
 

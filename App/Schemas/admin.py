@@ -30,3 +30,7 @@ class GetCourse(BaseModel):
 
 class RemoveCourse(BaseModel):
     course_id: int
+
+
+class RemoveUser(BaseModel):
+    user_id: int
