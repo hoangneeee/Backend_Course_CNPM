@@ -68,6 +68,29 @@ async def create_course(course: schemas_admin.CreateCourse, access_token: Option
     return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.CREATE_COURSE_SUCCESS)
 
 
+@router.post('/update_course', summary='Update Course')
+async def create_course(course: schemas_admin.UpdateCourse, access_token: Optional[str] = Header(None, convert_underscores=True)):
+    print("/admin/update_course param=%s" % course.__dict__)
+    cur_time = common.get_now_time()
+    member_group = await common.verify_token(access_token)
+    if member_group != 0:
+        return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.NOT_ALLOWED)
+
+    row = "title='%s', video='%s', image='%s', description='%s', price='%s', status='%s'" % (
+        course.title,
+        course.video,
+        course.image,
+        course.description,
+        course.price,
+        course.status
+    )
+    where = "id=%s" % course.id
+    query = "update course set %s where %s" % (row, where)
+    await db.database.database.execute(query=query)
+
+    return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.NOT_ALLOWED)
+
+
 @router.post('/remove_course', summary='Remove Course')
 async def handle_register(course: schemas_admin.RemoveCourse, access_token: Optional[str] = Header(None, convert_underscores=True)):
     print("/admin/remove_course param=%s" % course.__dict__)

@@ -24,6 +24,18 @@ class CreateCourse(BaseModel):
     lessons: List[LessonInfo]
 
 
+class UpdateCourse(BaseModel):
+    id: int
+    title: str
+    video: str
+    image: str
+    description: str
+    author_id: int
+    price: float
+    status: int = 1
+    lessons: List[int]
+
+
 class GetCourse(BaseModel):
     id: int
 
