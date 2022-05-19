@@ -1,4 +1,5 @@
 from typing import List
+from App.Objects import admin as object_admin
 
 
 class MemberInfo(object):
@@ -13,3 +14,10 @@ class MemberInfo(object):
         self.gmail = ""
         self.phone = ""
         self.member_group = 0
+
+
+class HistoryInfo(object):
+    def __init__(self):
+        self.id = 0
+        self.member_id = 0
+        self.course_id = object_admin.CourseInfo.__dict__

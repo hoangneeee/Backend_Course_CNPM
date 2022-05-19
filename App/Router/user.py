@@ -168,16 +168,49 @@ async def add_cart(user: schemas_user.AddCart):
     cur_time = common.get_now_time()
 
     row = "create_time, update_time, member_id, course_id, total_price"
-    value = "'%s', '%s', '%s', '%s', '%s'" % (
+    value = "'%s', '%s', %s, %s, %s" % (
         cur_time,
         cur_time,
         user.member_id,
         user.course_id,
         user.total_price,
     )
-    query = db.get_insert_query('cart', row, value)
+    query = await db.get_insert_query('cart', row, value)
     await db.database.database.execute(query=query)
 
     return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.OK);
+
+
+@router.post('/get_history', summary='Handle Get History User')
+async def add_cart(user: schemas_user.GetHistory):
+    print("/user/get_history param=%s" % user.__dict__)
+
+    cur_time = common.get_now_time()
+
+    query = "select * from cart where member_id = %s and is_delete=true" % user.member_id
+    history_rows = await db.database.database.fetch_all(query=query)
+
+    # Response History
+    for history_row in history_rows:
+        history_info = objects_user.HistoryInfo()
+        for item in history_row:
+            for key in vars(history_info).keys():
+                if key == item:
+                    history_info.__dict__[key] = history_row.get(item)
+                    break
+
+        course_id = history_row.get('course_id')
+        query = "select * from course where id = %s" % course_id
+        course_row = await db.database.database.fetch_one(query=query)
+        course_info = objects_admin.CourseInfo()
+        for item in course_row:
+            for key in vars(course_info).keys():
+                if key == item:
+                    course_info.__dict__[key] = course_row.get(item)
+                    break
+        history_info.course_id = course_info.__dict__
+
+
+    return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.OK, data={'history_info': history_info});
 
 

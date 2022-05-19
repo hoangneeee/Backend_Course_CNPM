@@ -17,3 +17,7 @@ class AddCart(BaseModel):
     course_id: int
     total_price: float
 
+
+class GetHistory(BaseModel):
+    member_id: int
+
