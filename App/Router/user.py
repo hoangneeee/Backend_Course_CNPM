@@ -201,6 +201,60 @@ async def add_cart(user: schemas_user.AddCart):
     return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.OK)
 
 
+@router.post('/get_cart', summary='Handle Get Cart')
+async def get_cart(user: schemas_user.GetUserId):
+    print("/user/get_cart param=%s" % user.__dict__)
+
+    cur_time = common.get_now_time()
+
+    query = "select * from cart where member_id = %s and is_delete = false"% user.member_id
+    cart_rows = await db.database.database.fetch_all(query=query)
+
+    if (len(cart_rows) <= 0):
+        return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.OK,
+                            data={'cart_info': []})
+
+    # Response Cart
+    for cart_row in cart_rows:
+        course_id = cart_row.get('course_id')
+        member_id = cart_row.get('member_id')
+
+        cart_info = objects_user.CartInfo()
+        for item in cart_row:
+            for key in vars(cart_info).keys():
+                if key == item:
+                    cart_info.__dict__[key] = cart_row.get(item)
+                    break
+
+        query = "select * from course where id=%s" % course_id
+        course_row = await db.database.database.fetch_one(query=query)
+
+        if course_row is None:
+            return ResponseData(status_code=status.HTTP_200_OK, data={'courses': {}})
+
+        # Response Course
+        course_info = objects_admin.CourseInfo()
+        for item in course_row:
+            for key in vars(course_info).keys():
+                if key == item:
+                    course_info.__dict__[key] = course_row.get(item)
+                    break
+        cart_info.course_id = course_info.__dict__
+
+        # Response Member
+        query = "select * from member where id=%s" % member_id
+        member_row = await db.database.database.fetch_one(query=query)
+        member_info = objects_user.MemberInfo()
+        for item in member_row:
+            for key in vars(member_info).keys():
+                if key == item:
+                    member_info.__dict__[key] = member_row.get(item)
+                    break
+        cart_info.member_id = member_info.__dict__
+
+    return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.OK, data={'cart_info': cart_info})
+
+
 @router.post('/get_history', summary='Handle Get History User')
 async def add_cart(user: schemas_user.GetHistory):
     print("/user/get_history param=%s" % user.__dict__)

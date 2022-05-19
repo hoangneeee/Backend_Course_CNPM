@@ -18,6 +18,10 @@ class AddCart(BaseModel):
     total_price: float
 
 
+class GetUserId(BaseModel):
+    member_id: int
+
+
 class GetHistory(BaseModel):
     member_id: int
 
