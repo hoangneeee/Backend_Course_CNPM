@@ -178,7 +178,27 @@ async def add_cart(user: schemas_user.AddCart):
     query = await db.get_insert_query('cart', row, value)
     await db.database.database.execute(query=query)
 
-    return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.OK);
+    return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.OK)
+
+
+@router.post('/add_cart', summary='Handle Add Cart')
+async def add_cart(user: schemas_user.AddCart):
+    print("/user/add_cart param=%s" % user.__dict__)
+
+    cur_time = common.get_now_time()
+
+    row = "create_time, update_time, member_id, course_id, total_price"
+    value = "'%s', '%s', %s, %s, %s" % (
+        cur_time,
+        cur_time,
+        user.member_id,
+        user.course_id,
+        user.total_price,
+    )
+    query = await db.get_insert_query('cart', row, value)
+    await db.database.database.execute(query=query)
+
+    return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.OK)
 
 
 @router.post('/get_history', summary='Handle Get History User')
@@ -189,6 +209,10 @@ async def add_cart(user: schemas_user.GetHistory):
 
     query = "select * from cart where member_id = %s and is_delete=true" % user.member_id
     history_rows = await db.database.database.fetch_all(query=query)
+
+    if (len(history_rows) <= 0):
+        return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.OK,
+                            data={'history_info': []})
 
     # Response History
     for history_row in history_rows:
