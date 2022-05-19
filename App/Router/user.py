@@ -167,7 +167,6 @@ async def add_cart(user: schemas_user.AddCart):
 
     cur_time = common.get_now_time()
 
-
     row = "create_time, update_time, member_id, course_id, total_price"
     value = "'%s', '%s', '%s', '%s', '%s'" % (
         cur_time,
@@ -178,5 +177,7 @@ async def add_cart(user: schemas_user.AddCart):
     )
     query = db.get_insert_query('cart', row, value)
     await db.database.database.execute(query=query)
+
+    return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.OK);
 
 

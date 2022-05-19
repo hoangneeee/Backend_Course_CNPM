@@ -109,7 +109,8 @@ async def create_cart():
                 update_time             char(14),
                 member_id               integer,
                 course_id               integer[],
-                total_price             float
+                total_price             float,
+                is_delete               boolean
                 )
             ''' % (tableName)
     await database.fetch_all(query)
