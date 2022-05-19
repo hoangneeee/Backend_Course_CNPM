@@ -88,6 +88,13 @@ async def create_course(course: schemas_admin.UpdateCourse, access_token: Option
     query = "update course set %s where %s" % (row, where)
     await db.database.database.execute(query=query)
 
+    lessons_id = course.lessons
+    for lesson in lessons_id:
+        row = "lesson=array_append(lesson, %s)" % (lesson)
+        where = "id=%s" % (course.id)
+        query = "update course set %s where %s" % (row, where)
+        await db.database.database.execute(query=query)
+
     return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.NOT_ALLOWED)
 
 
