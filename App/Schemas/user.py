@@ -25,3 +25,7 @@ class GetUserId(BaseModel):
 class GetHistory(BaseModel):
     member_id: int
 
+
+class CheckOutCart(BaseModel):
+    cart_ids: List[int]
+

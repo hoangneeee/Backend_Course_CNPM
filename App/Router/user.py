@@ -255,6 +255,23 @@ async def get_cart(user: schemas_user.GetUserId):
     return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.OK, data={'cart_info': cart_info})
 
 
+@router.post('/checkout_cart', summary='Handle Checkout Cart')
+async def checkout_cart(cart: schemas_user.CheckOutCart):
+    print("/user/checkout_cart param=%s" % cart.__dict__)
+
+    if len(cart.cart_ids) <= 0:
+        return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.NOT_CHECKOUT)
+
+    cart_ids = cart.cart_ids
+    for cart_id in cart_ids:
+        row = "is_delete=true"
+        where = "id=%s" % cart_id
+        query = "update cart set %s where %s" % (row, where)
+        await db.database.database.execute(query=query)
+
+    return ResponseData(status_code=status.HTTP_200_OK, status_message=res_message.OK)
+
+
 @router.post('/get_history', summary='Handle Get History User')
 async def add_cart(user: schemas_user.GetHistory):
     print("/user/get_history param=%s" % user.__dict__)
